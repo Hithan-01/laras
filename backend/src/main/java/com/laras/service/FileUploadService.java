@@ -1,21 +1,21 @@
 package com.laras.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class FileUploadService {
 
-    @Value("${app.upload.dir:uploads}")
-    private String uploadDir;
+    private final Cloudinary cloudinary;
 
     public String uploadImage(MultipartFile file) throws IOException {
         // Validate file
@@ -28,26 +28,22 @@ public class FileUploadService {
             throw new RuntimeException("Only image files are allowed");
         }
 
-        // Create upload directory if it doesn't exist
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        try {
+            // Upload to Cloudinary
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "folder", "laras",
+                    "resource_type", "image"
+            ));
+
+            // Return the secure URL
+            String secureUrl = (String) uploadResult.get("secure_url");
+            log.info("Image uploaded successfully to Cloudinary: {}", secureUrl);
+            return secureUrl;
+
+        } catch (Exception e) {
+            log.error("Failed to upload image to Cloudinary", e);
+            throw new IOException("Failed to upload image: " + e.getMessage());
         }
-
-        // Generate unique filename
-        String originalFilename = file.getOriginalFilename();
-        String extension = "";
-        if (originalFilename != null && originalFilename.contains(".")) {
-            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        }
-        String newFilename = UUID.randomUUID().toString() + extension;
-
-        // Save file
-        Path filePath = uploadPath.resolve(newFilename);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        // Return relative URL
-        return "/uploads/" + newFilename;
     }
 
     public void deleteImage(String imageUrl) throws IOException {
@@ -55,12 +51,51 @@ public class FileUploadService {
             return;
         }
 
-        // Extract filename from URL
-        String filename = imageUrl.replace("/uploads/", "");
-        Path filePath = Paths.get(uploadDir, filename);
+        // Only delete Cloudinary images
+        if (!imageUrl.contains("cloudinary.com")) {
+            log.warn("Attempted to delete non-Cloudinary image: {}", imageUrl);
+            return;
+        }
 
-        if (Files.exists(filePath)) {
-            Files.delete(filePath);
+        try {
+            // Extract public ID from URL
+            // URL format: https://res.cloudinary.com/cloud-name/image/upload/v123/folder/filename.ext
+            String publicId = extractPublicId(imageUrl);
+
+            if (publicId != null) {
+                Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+                log.info("Image deleted from Cloudinary: {} - Result: {}", publicId, result.get("result"));
+            }
+        } catch (Exception e) {
+            log.error("Failed to delete image from Cloudinary: {}", imageUrl, e);
+            throw new IOException("Failed to delete image: " + e.getMessage());
+        }
+    }
+
+    private String extractPublicId(String imageUrl) {
+        try {
+            // Remove the base URL and version
+            // Example: https://res.cloudinary.com/djfl9puuw/image/upload/v1234567890/laras/image.jpg
+            // Public ID: laras/image (without extension)
+
+            String[] parts = imageUrl.split("/upload/");
+            if (parts.length < 2) {
+                return null;
+            }
+
+            String pathWithVersion = parts[1];
+            // Remove version (v followed by numbers and /)
+            String path = pathWithVersion.replaceFirst("v\\d+/", "");
+            // Remove file extension
+            int lastDot = path.lastIndexOf(".");
+            if (lastDot > 0) {
+                path = path.substring(0, lastDot);
+            }
+
+            return path;
+        } catch (Exception e) {
+            log.error("Failed to extract public ID from URL: {}", imageUrl, e);
+            return null;
         }
     }
 }
