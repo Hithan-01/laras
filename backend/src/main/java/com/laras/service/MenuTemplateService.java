@@ -55,6 +55,7 @@ public class MenuTemplateService {
 
     public MenuTemplateItemDto createItem(MenuTemplateItemDto dto) {
         MenuTemplateItem item = MenuTemplateItem.builder()
+                .itemKey(dto.getItemKey())
                 .menuSection(dto.getMenuSection())
                 .menuNumber(dto.getMenuNumber() != null ? dto.getMenuNumber() : 1)
                 .name(dto.getName())
@@ -89,6 +90,7 @@ public class MenuTemplateService {
         MenuTemplateItem item = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Menu item not found with id: " + id));
 
+        item.setItemKey(dto.getItemKey());
         item.setMenuSection(dto.getMenuSection());
         if (dto.getMenuNumber() != null) item.setMenuNumber(dto.getMenuNumber());
         item.setName(dto.getName());
@@ -132,6 +134,7 @@ public class MenuTemplateService {
     private MenuTemplateItemDto toDto(MenuTemplateItem item) {
         return MenuTemplateItemDto.builder()
                 .id(item.getId())
+                .itemKey(item.getItemKey())
                 .menuSection(item.getMenuSection())
                 .menuNumber(item.getMenuNumber())
                 .name(item.getName())

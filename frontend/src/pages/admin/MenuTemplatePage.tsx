@@ -22,6 +22,83 @@ const SECTIONS = [
     { value: 'salsas', label: 'Salsas', menuNumber: 4 },
 ];
 
+// Claves disponibles por sección para el menú visual
+const ITEM_KEYS_BY_SECTION: Record<string, { key: string; label: string }[]> = {
+    'bebidas': [
+        { key: 'licuados', label: 'Licuados' },
+        { key: 'smoothies', label: 'Smoothies' },
+        { key: 'sodas', label: 'Sodas' },
+        { key: 'agua-frutas', label: 'Agua de Frutas' },
+        { key: 'chocolate', label: 'Chocolate' },
+        { key: 'frappe', label: 'Frappé' },
+        { key: 'mangonada-frappe', label: 'Mangonada Frappé' },
+        { key: 'cafe', label: 'Café' },
+    ],
+    'snacks': [
+        { key: 'sandwich-turkey', label: 'Sándwich Turkey' },
+        { key: 'sandwich-veggie', label: 'Sándwich Veggie' },
+        { key: 'sandwich-pollo', label: 'Sándwich Pollo' },
+        { key: 'sincronizada-res', label: 'Sincronizada Res' },
+        { key: 'sincronizada-veg', label: 'Sincronizada Veg' },
+        { key: 'tenders', label: 'Tenders' },
+        { key: 'boneless-snack', label: 'Boneless (Snack)' },
+    ],
+    'papas': [
+        { key: 'papas', label: 'Papas' },
+        { key: 'beef-bowl', label: 'Beef Bowl' },
+        { key: 'salchipapas', label: 'Salchipapas' },
+        { key: 'boneless-bowl', label: 'Boneless Bowl' },
+        { key: 'chicken-bowl', label: 'Chicken Bowl' },
+    ],
+    'tortas-veg': [
+        { key: 'milanesa-enchilado', label: 'Milanesa Gluten Enchilado' },
+        { key: 'milanesa-empanizado', label: 'Milanesa Gluten Empanizado' },
+        { key: 'fajita-gluten', label: 'Fajita Gluten Jengibre' },
+        { key: 'gluten-pastor', label: 'Gluten al Pastor' },
+    ],
+    'hamburguesas': [
+        { key: 'classic-beef', label: 'Classic Beef' },
+        { key: 'classic-veggie', label: 'Classic Veggie' },
+        { key: 'hamburguesa-doble', label: 'Hamburguesa Doble' },
+        { key: 'hamburguesa-doble-veggie', label: 'Hamburguesa Doble Veg' },
+        { key: 'salchi-burguer', label: 'Salchi-Burguer' },
+        { key: 'salchi-burguer-veggie', label: 'Salchi-Burguer Veg' },
+        { key: 'hamburguesa-jalapeno', label: 'Hamburguesa Jalapeño' },
+        { key: 'hamburguesa-jalapeno-veggie', label: 'Hamburguesa Jalapeño Veg' },
+    ],
+    'carnes': [
+        { key: 'chicken-tender', label: 'Chicken Tender Burger' },
+        { key: 'hamburguesa-bbq', label: 'Hamburguesa BBQ' },
+        { key: 'hamburguesa-bbq-veggie', label: 'Hamburguesa BBQ Veg' },
+        { key: 'hamburguesa-hawaiana', label: 'Hamburguesa Hawaiana' },
+    ],
+    'tacos': [
+        { key: 'tacos-res', label: 'Tacos de Res' },
+        { key: 'tacos-veg-enchilados', label: 'Tacos Veg Enchilados' },
+        { key: 'tacos-vegetarianos', label: 'Tacos Vegetarianos' },
+        { key: 'tacos-pastor-veggie', label: 'Tacos al Pastor Veg' },
+    ],
+    'tortas-carnita': [
+        { key: 'fajita-beef', label: 'Fajita Beef' },
+        { key: 'chicken-fajita', label: 'Chicken Fajita' },
+        { key: 'arrachera-cheese', label: 'Arrachera Cheese Steak' },
+    ],
+    'combos': [
+        { key: 'combo-1', label: 'Combo #1' },
+        { key: 'combo-2', label: 'Combo #2' },
+        { key: 'combo-3', label: 'Combo #3' },
+        { key: 'combo-4', label: 'Combo #4' },
+        { key: 'combo-5', label: 'Combo #5' },
+        { key: 'combo-6', label: 'Combo #6' },
+        { key: 'combo-7', label: 'Combo #7' },
+        { key: 'combo-8', label: 'Combo #8' },
+        { key: 'combo-9', label: 'Combo #9' },
+    ],
+    'salsas': [
+        { key: 'salsa', label: 'Salsa Extra' },
+    ],
+};
+
 const MenuTemplatePage: React.FC = () => {
     const queryClient = useQueryClient();
     const { isAuthenticated } = useAuth();
@@ -193,6 +270,10 @@ const MenuTemplatePage: React.FC = () => {
                                 {expandedItems.has(item.id) && (
                                     <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm">
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div className="col-span-2 md:col-span-4">
+                                                <span className="text-muted-foreground">Clave (itemKey):</span>
+                                                <span className="ml-2 font-mono font-semibold text-primary">{item.itemKey || <span className="text-amber-500 italic">Sin asignar</span>}</span>
+                                            </div>
                                             <div>
                                                 <span className="text-muted-foreground">Posición Top:</span>
                                                 <span className="ml-2 font-mono">{item.positionTop || '-'}</span>
@@ -247,6 +328,7 @@ interface MenuItemModalProps {
 }
 
 const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, defaultSection, onClose, onSave, isLoading }) => {
+    const [itemKey, setItemKey] = useState(item?.itemKey || '');
     const [menuSection, setMenuSection] = useState(item?.menuSection || defaultSection);
     const [name, setName] = useState(item?.name || '');
     const [description, setDescription] = useState(item?.description || '');
@@ -271,6 +353,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, defaultSection, onC
         const sectionConfig = SECTIONS.find(s => s.value === menuSection);
 
         const data: MenuTemplateItemInput = {
+            itemKey: itemKey || undefined,
             menuSection,
             menuNumber: sectionConfig?.menuNumber || 1,
             name,
@@ -319,6 +402,29 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, defaultSection, onC
                         </select>
                     </div>
 
+                    {/* Item Key - Dropdown */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">
+                            Vincular con el Menú Visual
+                            <span className="text-xs text-muted-foreground ml-2">(selecciona la posición)</span>
+                        </label>
+                        <select
+                            value={itemKey}
+                            onChange={(e) => setItemKey(e.target.value)}
+                            className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                        >
+                            <option value="">-- Sin vincular --</option>
+                            {(ITEM_KEYS_BY_SECTION[menuSection] || []).map((opt) => (
+                                <option key={opt.key} value={opt.key}>
+                                    {opt.label} ({opt.key})
+                                </option>
+                            ))}
+                        </select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            Selecciona la posición en el menú visual donde aparecerá este item
+                        </p>
+                    </div>
+
                     {/* Name */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Nombre *</label>
@@ -342,7 +448,8 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, defaultSection, onC
                         />
                     </div>
 
-                    {/* Price Type */}
+                    {/* Price Type - OCULTO POR AHORA */}
+                    {/*
                     <div>
                         <label className="block text-sm font-medium mb-2">Tipo de Precio</label>
                         <div className="flex gap-2">
@@ -366,7 +473,6 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, defaultSection, onC
                         </div>
                     </div>
 
-                    {/* Price Fields */}
                     {priceType === 'single' && (
                         <div>
                             <label className="block text-sm font-medium mb-1">Precio</label>
@@ -453,6 +559,7 @@ const MenuItemModal: React.FC<MenuItemModalProps> = ({ item, defaultSection, onC
                             </div>
                         </div>
                     )}
+                    */}
 
                     {/* Position (collapsible) */}
                     <details className="bg-muted/30 rounded-lg">

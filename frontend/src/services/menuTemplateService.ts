@@ -2,6 +2,7 @@ import api from './api';
 
 export interface MenuTemplateItem {
     id: number;
+    itemKey?: string;
     menuSection: string;
     menuNumber: number;
     name: string;
@@ -31,6 +32,7 @@ export interface MenuTemplateItem {
 }
 
 export interface MenuTemplateItemInput {
+    itemKey?: string;
     menuSection: string;
     menuNumber?: number;
     name: string;
