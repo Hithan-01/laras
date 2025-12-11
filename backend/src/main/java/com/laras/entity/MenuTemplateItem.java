@@ -21,6 +21,11 @@ import java.math.BigDecimal;
 @Builder
 public class MenuTemplateItem extends BaseEntity {
 
+    // Unique key to match with frontend layout (e.g., "licuados", "sandwich-turkey")
+    @Size(max = 50)
+    @Column(name = "item_key", unique = true)
+    private String itemKey;
+
     // Which menu section this belongs to (e.g., "bebidas", "snacks", "papas", "tortas")
     @NotBlank
     @Size(max = 50)

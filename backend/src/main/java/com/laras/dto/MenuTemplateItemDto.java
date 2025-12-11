@@ -18,6 +18,9 @@ public class MenuTemplateItemDto {
 
     private Long id;
 
+    // Unique key to match with frontend layout (e.g., "licuados", "sandwich-turkey")
+    private String itemKey;
+
     @NotBlank(message = "Menu section is required")
     private String menuSection;
 
