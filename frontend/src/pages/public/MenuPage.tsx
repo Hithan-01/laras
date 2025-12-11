@@ -185,11 +185,11 @@ const MenuPage: React.FC = () => {
                         {menuPages.map((page, index) => (
                             <div
                                 key={page.id}
-                                className={`flex-[0_0_80%] md:flex-[0_0_55%] lg:flex-[0_0_40%] min-w-0 px-4 transition-all duration-300 ${selectedIndex === index ? 'opacity-100 scale-100' : 'opacity-40 scale-95'
+                                className={`flex-[0_0_95%] md:flex-[0_0_70%] lg:flex-[0_0_50%] min-w-0 px-2 md:px-4 transition-all duration-300 ${selectedIndex === index ? 'opacity-100 scale-100' : 'opacity-40 scale-95'
                                     }`}
                             >
                                 <div
-                                    className={`relative bg-white shadow-2xl mx-auto transition-shadow duration-300 ${selectedIndex === index ? 'shadow-2xl shadow-black/50' : 'shadow-lg'
+                                    className={`relative bg-white shadow-2xl mx-auto transition-shadow duration-300 touch-manipulation ${selectedIndex === index ? 'shadow-2xl shadow-black/50' : 'shadow-lg'
                                         }`}
                                     style={{ aspectRatio: '8.5/11' }}
                                 >
