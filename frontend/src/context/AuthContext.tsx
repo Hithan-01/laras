@@ -6,7 +6,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (credentials: LoginRequest) => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,8 +39,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
     };
 
-    const logout = (): void => {
-        authService.logout();
+    const logout = async (): Promise<void> => {
+        await authService.logout();
         setUser(null);
     };
 

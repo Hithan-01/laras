@@ -5,11 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = { "com.example.laras", "com.laras" })
 @EntityScan(basePackages = { "com.example.laras", "com.laras" })
 @EnableJpaRepositories(basePackages = { "com.example.laras", "com.laras" })
 @ComponentScan(basePackages = { "com.example.laras", "com.laras" })
+@EnableScheduling
 public class LarasApplication {
 
 	public static void main(String[] args) {

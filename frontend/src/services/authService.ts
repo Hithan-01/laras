@@ -28,9 +28,18 @@ export const authService = {
         return response.data;
     },
 
-    logout: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    logout: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                await api.post('/auth/logout');
+            }
+        } catch (error) {
+            // Continuar con logout local aunque falle el servidor
+        } finally {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        }
     },
 
     getToken: (): string | null => {

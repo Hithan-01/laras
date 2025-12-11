@@ -68,4 +68,16 @@ public class JwtUtils {
             return false;
         }
     }
+
+    public java.time.LocalDateTime getExpirationDateFromToken(String token) {
+        Date expiration = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+        return expiration.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
 }

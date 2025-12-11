@@ -5,6 +5,8 @@ import com.laras.dto.LoginRequest;
 import com.laras.entity.User;
 import com.laras.repository.UserRepository;
 import com.laras.security.JwtUtils;
+import com.laras.service.TokenBlacklistService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,6 +29,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
@@ -64,5 +68,24 @@ public class AuthController {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .build());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            String token = headerAuth.substring(7);
+            try {
+                var expirationDate = jwtUtils.getExpirationDateFromToken(token);
+                tokenBlacklistService.blacklistToken(token, expirationDate);
+                SecurityContextHolder.clearContext();
+                return ResponseEntity.ok().body("{\"message\": \"Logout exitoso\"}");
+            } catch (Exception e) {
+                return ResponseEntity.ok().body("{\"message\": \"Logout exitoso\"}");
+            }
+        }
+
+        return ResponseEntity.ok().body("{\"message\": \"Logout exitoso\"}");
     }
 }
