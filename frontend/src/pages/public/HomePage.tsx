@@ -111,7 +111,7 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         const fetchGooglePlaceInfo = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://216.238.79.66:8084/api'}/google-place-info`);
+                const response = await fetch('/api/google-place-info');
                 if (!response.ok) throw new Error('Failed to fetch');
 
                 const info: GooglePlaceInfo = await response.json();
@@ -145,7 +145,7 @@ const HomePage: React.FC = () => {
 
         const fetchSchedule = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://216.238.79.66:8084/api'}/schedule`);
+                const response = await fetch('/api/schedule');
                 if (!response.ok) throw new Error('Failed to fetch schedule');
                 const data = await response.json();
                 if (data && data.length > 0) {

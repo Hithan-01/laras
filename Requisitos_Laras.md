@@ -33,6 +33,8 @@ Diciembre 2024
 
 9\. Consideraciones Adicionales
 
+10\. URL de Prueba / Demo
+
 # **1\. Introducción**
 
 El presente documento describe los requisitos técnicos y funcionales para el desarrollo de una página web profesional para restaurante, acompañada de un panel de administración que permitirá gestionar todo el contenido de manera autónoma.
@@ -287,5 +289,38 @@ Incluye todo lo de Opción A, más:
 * Autonomía total para gestionar contenido  
 * Mejor posicionamiento en búsquedas de Google  
 * Base para futuras expansiones digitales
+
+# **10. URL de Prueba / Demo**
+
+Se ha desplegado una versión funcional del sistema para demostración y pruebas. El sitio web completo está disponible en línea para que el cliente pueda visualizar el funcionamiento real de la página pública y el panel de administración.
+
+## **10.1 Acceso a la Página Web**
+
+| Elemento | Detalle |
+| :---- | :---- |
+| URL de prueba | https://laras.duckdns.org |
+| Estado | En funcionamiento |
+| Descripción | Versión demo con todas las funcionalidades implementadas |
+
+La página web pública incluye todas las secciones descritas en este documento: inicio, menú, promociones, horarios, ubicación, contacto y reseñas. El indicador de estado Abierto/Cerrado funciona en tiempo real según los horarios configurados.
+
+## **10.2 Acceso al Panel de Administración**
+
+Para acceder al panel de control donde se gestiona todo el contenido de la página web:
+
+| Elemento | Detalle |
+| :---- | :---- |
+| URL del Panel | https://laras.duckdns.org/admin/login |
+| Usuario | admin |
+| Contraseña | admin123 |
+
+Desde el panel de administración se puede:
+- Gestionar el menú (categorías y platillos)
+- Crear y editar promociones
+- Configurar horarios de operación
+- Administrar reseñas y testimonios
+- Actualizar información del restaurante
+
+**Nota:** Esta es una URL de demostración temporal. Para producción se configurará un dominio personalizado según las preferencias del cliente.
 
 *— Fin del Documento —*

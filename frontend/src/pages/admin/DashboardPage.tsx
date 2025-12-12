@@ -26,7 +26,7 @@ const DashboardPage: React.FC = () => {
 
     useEffect(() => {
         // Fetch restaurant status
-        fetch(`${process.env.REACT_APP_API_URL || 'http://216.238.79.66:8084/api'}/schedule/status`)
+        fetch('/api/schedule/status')
             .then(res => res.json())
             .then(data => setStatus(data))
             .catch(() => setStatus(null));
